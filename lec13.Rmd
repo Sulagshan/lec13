@@ -1,0 +1,188 @@
+---
+title: "STA286 Lecture 12"
+author: "Neil Montgomery"
+date: "Last edited: `r format(Sys.time(), '%Y-%m-%d %H:%M')`"
+output: 
+  beamer_presentation:
+    keep_tex: TRUE
+    incremental: TRUE
+    df_print: tibble
+    fig_caption: FALSE
+classoption: aspectratio=169
+header-includes:
+- \renewcommand{\le}{\leqslant}
+- \renewcommand{\ge}{\geqslant}
+- \renewcommand\P[1]{P{\left(#1\right)}}
+- \newcommand\F[1]{F_{\tiny{#1}}}
+- \newcommand\f[1]{f_{\tiny{#1}}}
+- \newcommand\p[1]{p_{\tiny{#1}}}
+- \newcommand\M[1]{M_{\tiny{#1}}}
+- \newcommand\V[1]{\text{Var}\!\left(#1\right)}
+- \newcommand\E[1]{E\!\left(#1\right)}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE)
+options(tibble.width=70)
+```
+
+# a (strange) new way to completely characterize the distribution of a random variable (note: section 7.3 of book)
+
+## what is important about a random variable?
+
+One of the main points of this course so far: we essentially care about the *distribution* of a random variable $X$, which maps events $X\in A$ to probabilities $P(X\in A).$
+
+So far we have the following ways (***only***) to characterize a random variable's distribution, depending on the circumstances:
+
+1. Cumulative distribution function $F(x) = P(X \le x)$ (you take on faith that this does the job)
+
+2. (Discrete only) Probability mass functions $p(x)$ (equivalent to cdf)
+
+3. (Continuous only) Probability density functions $f(x)$ (equivalent to cdf)
+
+
+\pause We will use whichever one is most convenient for a given situation.
+
+## mean, variance, and "moments" 
+
+$\E{X}$ gives a little bit of information about a random variable. 
+
+\pause $\V{X} = \E{X^2} - E(X)^2$ gives a little bit *more* information about a random variable. 
+
+(c.f. Markov's and Chebyshev's inequalities.)
+
+\pause \textbf{Definition:} For integers $k\ge 0$, $\E{X^k}$ (if it exists) is called the $k$th *moment* of a random variable.
+
+Note: calculating all these moments is not the point at all. The concept itself is what is important.
+
+## the complete moment sequence *characterizes* a distribution
+
+If turns out that if *all* moments exist:
+$$\left\{\E{X}, \E{X^2}, \E{X^3}, \E{X^4},\ldots \right\}$$
+then this sequence *usually* gives a *characterization* of the distribution of $X.$
+
+(I'll tell you how to know *when* this "sometimes" is, momentarily.)
+
+\pause But carrying an around infinite sequence is not convenient---they need to be neatly packaged. Here is the trick:
+\begin{align*}
+\onslide<3->{\M{X}(t) &= 1 + \E{X}\frac{t}{1!} + \E{X^2}\frac{t^2}{2!} + \E{X^3}\frac{t^3}{3!} + \E{X^4}\frac{t^4}{4!}\cdots}\\
+\onslide<4->{&= \E{1 + Xt + X^2\frac{t^2}{2!} + X^3\frac{t^3}{3!} + X^4\frac{t^4}{4!} + \cdots}\\}
+\onslide<5->{&= \E{e^{tX}}}
+\end{align*}
+
+## moment "generating function"
+
+Definition: $\M{X}(t)$ is called the \textit{moment generating function}, or mgf, for $X$ (small print: has to converge on an interval containing 0.)
+
+\pause Important fact: the mgf (if it exists) characterizes the distribution of $X$. 
+
+\pause Its less important use is that it can be used to calculate moments:
+\begin{align*}
+\onslide<4->{\left.\frac{d^r}{dt^r}\M{X}(t)\right|_{t=0}} \onslide<5->{&= \left[\int\limits_{-\infty}^{\infty} e^{tx}f(x)\,dx \right]_{t=0}\\}
+\onslide<6->{&= \left.\int\limits_{-\infty}^{\infty} \frac{d^r}{dt^r} e^{tx}f(x)\,dx \right|_{t=0}\\}
+\onslide<7->{&= \left.\int\limits_{-\infty}^{\infty} x^r e^{tx}f(x)\,dx \right|_{t=0} = \int\limits_{-\infty}^{\infty} x^r f(x)\,dx = \E{X^r}}
+\end{align*}
+
+## mgf example
+
+Reconsider the generic "observe until the first defective item" example, in which a defective item is produced with probability $p$. The pmf of the number of items $X$ is:
+$$p(x) = \left(1-p\right)^{x-1}p \text{ for } x \in \{1,2,3,\ldots,\}$$
+
+\pause The mgf of $X$ is:
+\begin{align*}
+\M{X}(t)=\E{e^{tX}} &= \sum\limits_{x=1}^\infty e^{tx}(1-p)^{x-1}p\\
+&= pe^t\sum\limits_{x=1}^\infty[e^t(1-p)]^{x-1}\\
+&= \frac{pe^t}{1-(1-p)e^t}
+\end{align*}
+
+\pause Tedious calculus shows $M^\prime_{\tiny X}(t) = \frac{pe^t}{(1-(1-p)e^t)^2}$, which when evaluated at 0 is $\frac{1}{p}$. (I hope!)
+
+## the more important use of of mgfs
+
+Recall that if $X$ and $Y$ are independent, $E(XY)=E(X)E(Y)$. This can extend easily to:
+$$E(g(X)h(Y)) = E(g(X))E(h(Y))$$
+
+\pause Now, consider the random variable $X+Y$ with $X$ and $Y$ independent. What could be said about the \textit{distribution} of $X+Y$? This is a difficult problem!
+
+\pause But the following result will be useful over the next few weeks:
+$$\M{X+Y}(t) \onslide<4->{=\E{e^{t(X+Y)}}} \onslide<5->{= \E{e^{tX}e^{tY}}} \onslide<6->{= \E{e^{tX}}\E{e^{tY}}} \onslide<7->{= \M{X}(t)\M{Y}(t)}$$
+
+# distributions with names, because they are used all the time to model actual things
+
+## a few conventions
+
+Some families of random variables are common enough that they get their own names.
+
+\pause "The Foo Distribution"
+
+\pause Typically the Foo Distribution will only be specified up to some constants that are called \text{parameters.} The parameters often have some meaning or another.
+
+\pause Notation: $X \sim \text{Foo}(\delta, \nu)$
+
+\pause This is pronounced: "$X$ has a Foo distribution with parameters $\delta$ and $\nu$."
+
+\pause Finally, a collection of random variables is often called a "process". We will examine two processes that are central to probability modeling.
+
+## the Bernoulli distributions
+
+We've seen this one a few times. $X$ has two outcomes: 0 and 1. We say $X\sim$ Bernoulli$(p)$. The parameter is $p = P(X=1)$.
+
+\pause \textbf{pmf:} $p(x) = p^x(1-p)^{1-x}, \quad x\in{0,1}$
+
+\pause Sometimes $1-p = q$ is used when convenient.
+
+\pause $E(X) = (0)(1-p) + (1)(p) = p$
+
+\pause For variance, use $E(X^2)=0^2(1-p)+1^2p = p$, so that $\V{X} = p - p^2 = p(1-p) = pq$
+
+\pause $SD(X) = \sqrt{p(1-p)}$
+
+\pause $\M{X}(t) = E(e^{tX}) = e^{t\cdot 0}q+ e^{t\cdot 1}p = q + e^tp$
+
+## Bernoulli process
+
+The Bernoulli$(p)$ distributions are used as models for anything with two possible outcomes.
+
+\pause There is usually more than one at a time. A \textit{Bernoulli process} is a sequence of independent Bernoulli$(p)$ random variables with the same $p$:
+$$X_1,X_2,X_3,X_4\ldots$$
+
+Often each $X_i$ is called a (Bernoulli) \textit{trial}, or an \textit{experiment}.
+
+## after $n$ trials, how many 1's?
+
+Fix the number of Bernoulli trials at $n$, and let $X$ be the count of the 1's that occurred. What is the \textit{distribution} of $X$?
+
+\pause First, $X$ could be any integer between 0 and $n$. 
+
+\pause To illustrate a probability calculation, fix $n=4$; we'll consider $P(X=2)$.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{cc}
+Trial outcomes & Probability\\
+\onslide<4->{1 1 0 0 & $p^2(1-p)^2$}\\
+\onslide<5->{1 0 1 0 & $p(1-p)p(1-p)$}\onslide<6->{$ = p^2(1-p)^2$}\\
+\onslide<7->{1 0 0 1 & $p^2(1-p)^2$\\
+0 1 1 0 & $p^2(1-p)^2$\\
+0 1 0 1 & $p^2(1-p)^2$\\
+0 0 1 1 & $p^2(1-p)^2$}
+\end{tabular}
+\end{table}
+
+## the Binomial$(n,p)$ distributions
+
+There are 6 ways to get 2 1s in 4 trials, so $P(X=2)=6p^2(1-p)^2$.
+
+\pause In general, the number of ways to get $k$ 1s in $n$ trials is:
+$${n \choose k} = \frac{n!}{k!(n-k)!}$$
+
+\pause If $X$ is the number of 1s in $n$ Bernoulli$(p)$ trials, we say:
+$$X \sim \text{Binomial}(n,p)$$
+
+\pause \textbf{pmf:} $P(X=k) = {n \choose k}p^k(1-p)^{n-k}$ for $k \in \{0,1,\ldots,n\}$
+
+\pause Is this actually a valid pmf? Yes, if you recall the \textit{Binomial theorem}:
+$$(a + b)^n = \sum\limits_{k=0}{n \choose k}a^kb^{n-k}$$
+Let $a=p$ and $b=1-p$.
+
+
