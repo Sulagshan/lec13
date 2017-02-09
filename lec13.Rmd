@@ -78,7 +78,7 @@ Definition: $\M{X}(t)$ is called the \textit{moment generating function}, or mgf
 
 \pause Its less important use is that it can be used to calculate moments:
 \begin{align*}
-\onslide<4->{\left.\frac{d^r}{dt^r}\M{X}(t)\right|_{t=0}} \onslide<5->{&= \left[\int\limits_{-\infty}^{\infty} e^{tx}f(x)\,dx \right]_{t=0}\\}
+\onslide<4->{\left.\frac{d^r}{dt^r}\M{X}(t)\right|_{t=0}} \onslide<5->{&= \frac{d^r}{dt^r}\left[\int\limits_{-\infty}^{\infty} e^{tx}f(x)\,dx \right]_{t=0}\\}
 \onslide<6->{&= \left.\int\limits_{-\infty}^{\infty} \frac{d^r}{dt^r} e^{tx}f(x)\,dx \right|_{t=0}\\}
 \onslide<7->{&= \left.\int\limits_{-\infty}^{\infty} x^r e^{tx}f(x)\,dx \right|_{t=0} = \int\limits_{-\infty}^{\infty} x^r f(x)\,dx = \E{X^r}}
 \end{align*}
